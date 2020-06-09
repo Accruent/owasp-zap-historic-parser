@@ -1,5 +1,4 @@
 """This module is used for parsing OWASP ZAP html files and pushing the results to MySQL"""
-# import sys
 import mysql.connector
 from lxml import etree
 
@@ -223,26 +222,3 @@ def connect_to_mysql_db(host, port, user, pwd, dbname):
         return mydb
     except AttributeError:
         print('Unable to make MySQL connection')
-
-
-# FILENAME = sys.argv[1]
-# PROJECT_NAME = sys.argv[2]
-# THIS_ENV = sys.argv[3]
-# SCAN_TYPE = sys.argv[4]
-# URL_LINK = sys.argv[5]
-# OZH_HOST = sys.argv[6]
-# OZH_PORT = sys.argv[7]
-# OZH_USERNAME = sys.argv[8]
-# OZH_PASSWORD = sys.argv[9]
-# VERSION = sys.argv[10]
-#
-# process_zap_file(FILENAME, PROJECT_NAME, THIS_ENV, SCAN_TYPE, URL_LINK, OZH_HOST, OZH_PORT,
-#                  OZH_USERNAME, OZH_PASSWORD, VERSION)
-#
-
-# LOCAL TESTING AREA
-# html = process_zap_file('c:\\temp\\report_229_.html', 'test', 'qa03', 'passive',
-#                          'http://www.google.com'
-#                          'ZAP_20scanning_20report/',
-#                          'localhost', 3306, 'superuser', 'passw0rd', 'test_version3')
-# print(html)
