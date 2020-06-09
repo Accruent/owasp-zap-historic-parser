@@ -6,7 +6,6 @@ setup(
     version="0.1.0",
     description='Parser to push OWASP ZAP report data to MySQL',
     classifiers=[
-        'Framework :: OWASP ZAP',
         'Programming Language :: Python',
         'Topic :: Software Development :: Testing',
     ],
