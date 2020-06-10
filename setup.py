@@ -1,10 +1,18 @@
 """This module is the setup for OWASP ZAP Historic Parser"""
 from setuptools import find_packages, setup
 
+
+with open("README.md", "r") as fh:
+    LONG_DESCRIPTION = fh.read()
+    print(LONG_DESCRIPTION)
+
+
 setup(
     name='owasp-zap-historic-parser',
-    version="0.1.0",
-    description='Parser to push OWASP ZAP report data to MySQL',
+    version="0.1.1",
+    description='Parser to push OWASP ZAP report data to MySQL and generate delta report',
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type='text/markdown',
     classifiers=[
         'Programming Language :: Python',
         'Topic :: Software Development :: Testing',
