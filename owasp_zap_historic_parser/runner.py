@@ -44,7 +44,7 @@ def parse_options():
     )
 
     general.add_argument(
-        '-e', '--executionname',
+        '-e', '--environment',
         dest='this_env',
         default='Not Provided',
         help="Environment Name"
