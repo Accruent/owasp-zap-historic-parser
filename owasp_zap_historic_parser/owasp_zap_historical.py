@@ -119,15 +119,24 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
         % (execution_rows[0], this_env, scantype, high_alerts[0], medium_alerts[0], low_alerts[0],
            info_alerts[0], version, projectname))
     ocon.commit()
+    last_date = last_id[1].strftime('%b %d %Y %I:%M %p %Z')
     # compare latest results
-    message = "OWASP ZAP Report comparison for " + this_env + " / " + scantype + " / " + version +\
-              "\n" + "This report date: " + str(last_id[1]) + "\n" + "This report link: " +\
-              url_link.replace(' ', '%20') + "\n"
+    # Construct title for email body
+    title = "<h1>OWASP ZAP Report Comparison for " + this_env + " / " + scantype + " / " +\
+            version + "</h1><hr /><table style='border: 1px white; border-collapse: collapse;'>" +\
+            "<thead>" + "</thead><tbody><tr><td style='border: 1px;'><strong>This report date: " +\
+            "</strong></td>" + "<td style='border: 1px;'>" + last_date + "CST</td></tr><tr>" +\
+            "<td style='border: 1px;'>" + "<strong>This report link:</strong></td><td style" +\
+            "='border: 1px;'><a href='" + url_link.replace(' ', '%20') + "'>This ZAP Report" +\
+            "</a></td></tr>"
+    overall = ""
+    alert_breakdown = ""
     cursor_obj.execute("SELECT COUNT(*) FROM TB_EXECUTION WHERE Environment = '%s'"
                        " AND Scan_Type ='%s' ;" % (this_env, scantype))
     compare_rows = cursor_obj.fetchone()
     if compare_rows[0] < 2:
-        message += 'Not enough rows to compare results for ' + this_env + ' and ' + scantype + '.'
+        title += "</tbody></table><p>Not enough rows to compare results for " + this_env +\
+                 " and " + scantype + ".</p><hr />"
     else:
         cursor_obj.execute("SELECT Execution_Id, Execution_Date, URL_Link FROM TB_EXECUTION "
                            "WHERE Environment = '%s' AND Scan_Type ='%s' ORDER BY Execution_Id "
@@ -143,70 +152,127 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
         cursor_obj.execute("SELECT Version FROM TB_EXECUTION WHERE Execution_Id = '%s'"
                            % compare_row[0])
         last_version = cursor_obj.fetchone()
-        message += "Comparison report version: " + str(last_version[0]) + "\n" + "Comparison " \
-                   "report date: " + str(compare_row[1]) + "\n" + "Comparison report link: " + \
-                   compare_row[2].replace(' ', '%20') + "\n" + "\n" + \
-                   compare_zap_results(current_alerts, last_alerts)
-    html_message = "<p>" + message.replace("\n", "<br>") + "</p>"
+        compare_date = compare_row[1].strftime('%b %d %Y %I:%M %p %Z')
+        title += "<tr><td style='border: 1px;'><strong>Comparison Report Version:</strong></td>" +\
+                 "<td style='border: 1px;'>" + str(last_version[0]) + "</td></tr><tr>" + \
+                 "<td style='border: 1px;'><strong>This Report Date:</strong></td>" + \
+                 "<td style='border: 1px;'>" + compare_date + "CST</td></tr><tr>" + \
+                 "<td style='border: 1px;'><strong>Comparison Report Link:</strong></td>" + \
+                 "<td style='border: 1px;'><a href='" + compare_row[2].replace(' ', '%20') + "'>" +\
+                 "Comparison ZAP Report</a></td></tr></tbody></table><hr />"
+        # Construct Overall Alerts Table
+        total_alerts = high_alerts[0] + medium_alerts[0] + low_alerts[0] + info_alerts[0]
+        overall = "<h2>Overall Alerts</h2><table style='float: left; text-align: center; " + \
+                  "border: 1px white; border-collapse: collapse;' width='465'><thead><tr " + \
+                  "style='background: gray;'><td style='border: 1px solid;'><strong>Total" + \
+                  "</strong></td><td style='border: 1px solid;'><strong>High</strong></td>" + \
+                  "<td style='border: 1px solid;'><strong>Medium</strong></td><td style='" + \
+                  "border: 1px solid;'><strong>Low</strong></td><td style='border: 1px solid;'>" + \
+                  "<strong>Informational</strong></td></tr></thead><tbody><tr style='" + \
+                  "background: silver;'><td style='border: 1px solid;'><strong>" + \
+                  str(total_alerts) + "</strong></td><td style='border: 1px solid black; " + \
+                  "color: red;'><strong>" + str(high_alerts[0]) + "</strong></td><td style='" + \
+                  "border: 1px solid black; color: #f6821f;'><strong>" + str(medium_alerts[0]) + \
+                  "</strong></td><td style='border: 1px solid black; color: #ffff66;'><strong>" + \
+                  str(low_alerts[0]) + "</strong></td><td style='border: 1px solid;'><strong>" + \
+                  str(info_alerts[0]) + "</strong></td></tr></tbody></table><br><br><br><hr />"
+        current_dict = convert_alert_to_dictionary(current_alerts)
+        last_dict = convert_alert_to_dictionary(last_alerts)
+        alert_breakdown = compare_zap_results(current_dict, last_dict, last_date,
+                                              compare_date)
+    html_message = title + overall + alert_breakdown
     return html_message
 
 
-def compare_zap_results(set1, set2):
+def convert_alert_to_dictionary(alert_list):
+    """This method converts a list of tuples into a dictionary of dictionaries"""
+    overall_dict = {}
+    for level, alert_type, count in alert_list:
+        this_dict = {alert_type: {'Alert Level': level, 'URLs Affected': count}}
+        overall_dict.update(this_dict)
+    return overall_dict
+
+
+def compare_zap_results(set1, set2, date1, date2):
     """This keyword compares the current ZAP result with the most recent result of the same
-    parameters and creates a message showing the differences."""
-    this_message = ''
-    same_message = ''
-    diff_message = ''
-    new_message = ''
-    resolved_message = ''
-    if len(set1) != len(set2):
-        this_message += "The number of alerts in the this result and the most recent result " \
-                        "do not match - " + str(len(set1)) + " != " + str(len(set2)) + '\n'
-    for alert in set1:
-        if alert in set2:
-            same_message += "Alert Level: " + str(alert[0]) + " | Alert Type: " + str(alert[1])\
-                            + " | URLS Affected: " + str(alert[2]) + " is the same in both " \
-                            "result sets. \n"
-            set1.remove(alert)
-            set2.remove(alert)
+    parameters and creates a table showing the differences."""
+    # Set H2 and Table Headers
+    alerts_table = "<h2>Alert Breakdown</h2><table style='float: left; text-align: center; " + \
+                   "border: 1px white; border-collapse: collapse;' width='1400'><thead>" + \
+                   "<tr style='background: gray;'><td style='border: 1px solid;'><strong>" + \
+                   "Alert Level</strong></td><td style='border: 1px solid;'><strong>Description" + \
+                   "</strong></td><td style='border: 1px solid;'><strong>URLs Affected<br />" + \
+                   date1 + "CST</strong></td><td style='border: 1px solid;'><strong>URLs " +\
+                   "Affected<br />" + date2 + "CST</strong></td><td style='border: 1px solid" +\
+                   ";'><strong>Comments</strong></td></tr></thead><tbody>"
+    # Set Alert Table
+    high_alerts = ''
+    low_alerts = ''
+    med_alerts = ''
+    info_alerts = ''
+    resolved_alerts = ''
+    for key in set1:
+        if key in set2:
+            if set2[key]['Alert Level'] == "High":
+                high_alerts += get_alert_table_row("#ff8585", "High", key,
+                                                   set1[key]['URLs Affected'],
+                                                   set2[key]['URLs Affected'])
+            elif set2[key]['Alert Level'] == "Medium":
+
+                med_alerts += get_alert_table_row("orange", "Medium", key,
+                                                  set1[key]['URLs Affected'],
+                                                  set2[key]['URLs Affected'])
+            elif set2[key]['Alert Level'] == "Low":
+                low_alerts += get_alert_table_row("lightyellow", "Low", key,
+                                                  set1[key]['URLs Affected'],
+                                                  set2[key]['URLs Affected'])
+            else:
+                info_alerts += get_alert_table_row("silver", "Informational", key,
+                                                   set1[key]['URLs Affected'],
+                                                   set2[key]['URLs Affected'])
         else:
-            for atype, desc, urls in [alert[0:3]]:
-                alert2 = ''
-                for alert2 in set2:
-                    for atype2, desc2, urls2 in [alert2[0:3]]:
-                        if atype == atype2 and desc == desc2:
-                            if urls > urls2:
-                                diff = urls - urls2
-                                diff_message += "Number of URLS for " + atype + " | " + desc + \
-                                                " increased by " + str(diff) + ".\n" + "This " \
-                                                "report URLS affected: " + str(urls) + " / " + \
-                                                "Comparison report URLS affected: " + str(urls2)\
-                                                + "\n"
-                            else:
-                                diff = urls2 - urls
-                                diff_message += "Number of URLS for " + desc + " decreased by "\
-                                                + str(diff) + ".\n" + "This report URLS " \
-                                                "affected: " + str(urls) + " / Comparison " \
-                                                "report URLS affected: " + str(urls2) + "\n"
-                            set1.remove(alert)
-                            set2.remove(alert2)
-                            break
-                    else:
-                        continue
-                    break
-                if alert2 == set2[-1]:
-                    new_message += "NEW ALERT - Alert Level: " + str(alert[0]) + " | Alert " \
-                                    "Type: " + str(alert[1]) + " | URLS Affected: " + \
-                                   str(alert[2]) + " not found in most recent result.\n"
-                    set1.remove(alert)
-                    break
-    for alert in set2:
-        if alert not in set1:
-            resolved_message += "ALERT POTENTIALLY RESOLVED - Alert Level: " + str(alert[0]) + \
-                                " | Alert Type: " + str(alert[1]) + " | URLS Affected: " +\
-                                str(alert[2]) + " from recent result not found in this result.\n"
-    this_message += new_message + resolved_message + diff_message + same_message
-    return this_message
+            if set1[key]['Alert Level'] == "High":
+                high_alerts += get_alert_table_row("#ff8585", "High", key,
+                                                   set1[key]['URLs Affected'], 0)
+            elif set1[key]['Alert Level'] == "Medium":
+                med_alerts += get_alert_table_row("orange", "Medium", key,
+                                                  set1[key]['URLs Affected'], 0)
+            elif set1[key]['Alert Level'] == "Low":
+                low_alerts += get_alert_table_row("lightyellow", "Low", key,
+                                                  set1[key]['URLs Affected'], 0)
+            else:
+                info_alerts += get_alert_table_row("silver", "Informational", key,
+                                                   set1[key]['URLs Affected'], 0)
+    for key in set2:
+        if key not in set1:
+            resolved_alerts += get_alert_table_row("lightgreen", set2[key]['Alert Level'], key,
+                                                   0, set2[key]['URLs Affected'])
+    # Construct and close Alerts table
+    alerts_table += high_alerts + med_alerts + low_alerts + info_alerts + \
+        resolved_alerts + "</tbody></table>"
+    return alerts_table
+
+
+def get_alert_table_row(back_color, alert_type, desc, urls, urls2):
+    """This method creates a table row for the alert table."""
+    comments = ''
+    if urls > urls2 > 0:
+        comments = 'Number of URLs Affected increased'
+    elif urls2 > urls > 0:
+        comments = 'Number of URLs Affected decreased'
+    elif urls == urls2 != 0:
+        comments = 'Number of URLs Affected stayed the same'
+    elif urls == 0:
+        comments = 'Alert potentially resolved'
+    elif urls2 == 0:
+        comments = 'New Alert'
+    this_table_row = "<tr style='background: " + back_color + ";'><td style='border: 1px solid" +\
+                     ";'><strong>" + alert_type + "</strong></td><td style='border: 1px " +\
+                     "solid;'><strong>" + desc + "</strong></td><td style=' border: 1px solid;'>" +\
+                     "<strong>" + str(urls) + "</strong>" + "</td><td style='border: 1px solid" +\
+                     ";'><strong>" + str(urls2) + "</strong></td><td style='border: 1px solid;'>" +\
+                     "<strong>" + comments + "</strong></td></tr>"
+    return this_table_row
 
 
 def connect_to_mysql_db(host, port, user, pwd, dbname):
