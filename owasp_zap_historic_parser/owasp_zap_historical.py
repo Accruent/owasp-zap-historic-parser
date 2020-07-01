@@ -188,7 +188,10 @@ def convert_alert_to_dictionary(alert_list):
     """This method converts a list of tuples into a dictionary of dictionaries"""
     overall_dict = {}
     for level, alert_type, count in alert_list:
-        this_dict = {alert_type: {'Alert Level': level, 'URLs Affected': count}}
+        combine = level + " | " + alert_type
+        this_dict = {combine: {'Alert Level': level,
+                               'Alert Type': alert_type,
+                               'URLs Affected': count}}
         overall_dict.update(this_dict)
     return overall_dict
 
@@ -214,38 +217,41 @@ def compare_zap_results(set1, set2, date1, date2):
     for key in set1:
         if key in set2:
             if set2[key]['Alert Level'] == "High":
-                high_alerts += get_alert_table_row("#ff8585", "High", key,
+                high_alerts += get_alert_table_row("#ff8585", "High", set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'],
                                                    set2[key]['URLs Affected'])
             elif set2[key]['Alert Level'] == "Medium":
 
-                med_alerts += get_alert_table_row("orange", "Medium", key,
+                med_alerts += get_alert_table_row("orange", "Medium", set1[key]['Alert Type'],
                                                   set1[key]['URLs Affected'],
                                                   set2[key]['URLs Affected'])
             elif set2[key]['Alert Level'] == "Low":
-                low_alerts += get_alert_table_row("lightyellow", "Low", key,
+                low_alerts += get_alert_table_row("lightyellow", "Low", set1[key]['Alert Type'],
                                                   set1[key]['URLs Affected'],
                                                   set2[key]['URLs Affected'])
             else:
-                info_alerts += get_alert_table_row("silver", "Informational", key,
+                info_alerts += get_alert_table_row("silver", "Informational",
+                                                   set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'],
                                                    set2[key]['URLs Affected'])
         else:
             if set1[key]['Alert Level'] == "High":
-                high_alerts += get_alert_table_row("#ff8585", "High", key,
+                high_alerts += get_alert_table_row("#ff8585", "High", set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'], 0)
             elif set1[key]['Alert Level'] == "Medium":
-                med_alerts += get_alert_table_row("orange", "Medium", key,
+                med_alerts += get_alert_table_row("orange", "Medium", set1[key]['Alert Type'],
                                                   set1[key]['URLs Affected'], 0)
             elif set1[key]['Alert Level'] == "Low":
-                low_alerts += get_alert_table_row("lightyellow", "Low", key,
+                low_alerts += get_alert_table_row("lightyellow", "Low", set1[key]['Alert Type'],
                                                   set1[key]['URLs Affected'], 0)
             else:
-                info_alerts += get_alert_table_row("silver", "Informational", key,
+                info_alerts += get_alert_table_row("silver", "Informational",
+                                                   set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'], 0)
     for key in set2:
         if key not in set1:
-            resolved_alerts += get_alert_table_row("lightgreen", set2[key]['Alert Level'], key,
+            resolved_alerts += get_alert_table_row("lightgreen", set2[key]['Alert Level'],
+                                                   set2[key]['Alert Type'],
                                                    0, set2[key]['URLs Affected'])
     # Construct and close Alerts table
     alerts_table += high_alerts + med_alerts + low_alerts + info_alerts + \
