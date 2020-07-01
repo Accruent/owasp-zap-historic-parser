@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='owasp-zap-historic-parser',
-    version="0.1.1",
+    version="0.1.2",
     description='Parser to push OWASP ZAP report data to MySQL and generate delta report',
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
