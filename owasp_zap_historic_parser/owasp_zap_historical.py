@@ -1,6 +1,11 @@
 """This module is used for parsing OWASP ZAP html files and pushing the results to MySQL"""
+import datetime
 import mysql.connector
 from lxml import etree
+import pytz
+
+# Times are stored as UTC and converted using this variable to CDT.
+CENTRAL = pytz.timezone('US/Central')
 
 
 def process_zap_file(opts):
@@ -119,13 +124,14 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
         % (execution_rows[0], this_env, scantype, high_alerts[0], medium_alerts[0], low_alerts[0],
            info_alerts[0], version, projectname))
     ocon.commit()
-    last_date = last_id[1].strftime('%b %d %Y %I:%M %p %Z')
+    last_date = last_id[1].replace(tzinfo=datetime.timezone.utc)\
+        .astimezone(CENTRAL).strftime('%b %d %Y %I:%M %p %Z')
     # compare latest results
     # Construct title for email body
     title = "<h1>OWASP ZAP Report Comparison for " + this_env + " / " + scantype + " / " +\
             version + "</h1><hr /><table style='border: 1px white; border-collapse: collapse;'>" +\
             "<thead>" + "</thead><tbody><tr><td style='border: 1px;'><strong>This report date: " +\
-            "</strong></td>" + "<td style='border: 1px;'>" + last_date + "CST</td></tr><tr>" +\
+            "</strong></td>" + "<td style='border: 1px;'>" + last_date + "</td></tr><tr>" +\
             "<td style='border: 1px;'>" + "<strong>This report link:</strong></td><td style" +\
             "='border: 1px;'><a href='" + url_link.replace(' ', '%20') + "'>This ZAP Report" +\
             "</a></td></tr>"
@@ -152,11 +158,12 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
         cursor_obj.execute("SELECT Version FROM TB_EXECUTION WHERE Execution_Id = '%s'"
                            % compare_row[0])
         last_version = cursor_obj.fetchone()
-        compare_date = compare_row[1].strftime('%b %d %Y %I:%M %p %Z')
+        compare_date = compare_row[1].replace(tzinfo=datetime.timezone.utc)\
+            .astimezone(CENTRAL).strftime('%b %d %Y %I:%M %p %Z')
         title += "<tr><td style='border: 1px;'><strong>Comparison Report Version:</strong></td>" +\
                  "<td style='border: 1px;'>" + str(last_version[0]) + "</td></tr><tr>" + \
                  "<td style='border: 1px;'><strong>This Report Date:</strong></td>" + \
-                 "<td style='border: 1px;'>" + compare_date + "CST</td></tr><tr>" + \
+                 "<td style='border: 1px;'>" + compare_date + "</td></tr><tr>" + \
                  "<td style='border: 1px;'><strong>Comparison Report Link:</strong></td>" + \
                  "<td style='border: 1px;'><a href='" + compare_row[2].replace(' ', '%20') + "'>" +\
                  "Comparison ZAP Report</a></td></tr></tbody></table><hr />"
@@ -205,8 +212,8 @@ def compare_zap_results(set1, set2, date1, date2):
                    "<tr style='background: gray;'><td style='border: 1px solid;'><strong>" + \
                    "Alert Level</strong></td><td style='border: 1px solid;'><strong>Description" + \
                    "</strong></td><td style='border: 1px solid;'><strong>URLs Affected<br />" + \
-                   date1 + "CST</strong></td><td style='border: 1px solid;'><strong>URLs " +\
-                   "Affected<br />" + date2 + "CST</strong></td><td style='border: 1px solid" +\
+                   date1 + "</strong></td><td style='border: 1px solid;'><strong>URLs " +\
+                   "Affected<br />" + date2 + "</strong></td><td style='border: 1px solid" +\
                    ";'><strong>Comments</strong></td></tr></thead><tbody>"
     # Set Alert Table
     high_alerts = ''
