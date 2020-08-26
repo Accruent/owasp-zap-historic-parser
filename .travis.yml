@@ -10,8 +10,6 @@ sudo: required
 dist: xenial
 services:
   - xvfb
-addons:
-  chrome: stable
 cache: pip
 install:
 - pip install .
