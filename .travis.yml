@@ -19,13 +19,13 @@ script:
 - pytest --cov owasp_zap_historic_parser -v
 after_success:
 - coveralls
-#deploy:
-#  provider: pypi
-#  user: __token__
-#  password:
-#    secure: pY3Gdmtyo2ARqU306qjp6B0XSif6kpeuvLKD+WBYupqbeus6uIXqBLbyxghlLXBAqfhLfy4zLpLcspZX5V/gcs/FTz6QEAEVNQZk7DePSLm787Z8ad817d8/B9rP7ivaGWpc5bBrU8T7/9LjEh+TIG8KspjQBlofweIzsaAjgRYesNFaYwKZru+WTsB3UYQlqwixIdopXYXthPazeg9+H3ieezEdsKXH44vF/vGsx0egTAzRJo9UPwGNVaDdcSNYasWaBSZ5SyUKfJ+K5mGiP/F8naeSi/ezLpnglEcjbWvxmQklBt3ugCtVMIh1G3gs1x0CTgDSuPlGlNHAK40y0pMZBN3psP++D1kk/ei7nVFWnU9YddEenyn/3Khku7Ql98KLCRpwACZPhIkwP4U801ZinNtipUeogThpCzylUssbhNiTGE7+fGtIbTpHgWRrzNXWOD9pGgx12kzGDu65plS9GAA96ANAyjDnMFTaB6S9iNbg32Ot6AZEhITArmmOEULtuJ+ITHl83ah4YsXEq3ftpFhdwwBpRSLFllV+Ib1CLEzNppNGhaSJEIhKb5w9XBaBbeQMiKw8bbA0/erwR2swnIpzvnk/sdpm8IsXnKP3tpvdJyO+zXxyaq6WIL0i2A0wjNHLkwrriOn4ggCkdhvMnf4rkwJZkt/ltIQyEMg=
-#  on:
-#    branch: master
-#    tags: true
-#  skip_existing: true
-#  distributions: "sdist bdist_wheel"
+deploy:
+  provider: pypi
+  user: __token__
+  password:
+    secure: PEIHchmcMH8O4xVaImS6OYinyWuyp46FArKrJGbId/sitmKL2CNy5C1qv5H6MobP6FRYQ8oRozV9w3aeVvVQgqfftu6OMdZ+vPwdNnU5xaAePWvVTuensAsMJUYXcWpLkmOax1zfM9EMfzLntg0z6NdnGq/T/iJGfEU1hW7/Gfj7/hm8q3KGAYchvl/7OamSvjh+BUC1/oxEMfAsXz0jo0/LodGUnyOKK0SJ49ILPF1Xpr6xVV+ESu/nCJCVVcwyBwEmD+vpi+vuDyf6OujM0M+o/+sUjo2mgaIeFRAALcCtWIoceMnIRdqq4sKjQ7IvA+wXGDdibS+Q0k9tH4HSvx9XSu+1sdVbx+mhFzO6oTAVpHaXtSPhF/c/6sUZ1rvcMQ2Iv9jKfd8LjDAXMX+a9e7DP3tDsUoEhac5ppVHis62NVtjsucMmfSxenuLlNJxWRrGShIcjSAWcP/S57JrepzxtpbFEBBUVBuysjkOALw75/V2WFh9grthRu8kbLZYDrjJHwc41qv+Rgz09V7cIq9kaBE5hZAFavPsVd+VdNlcu6LQydE4+5konLSgKMNiMqtZXIy2050oOCvXaNzyWPiTmLmyvI+cJd9kXx2lJ+XVICoEq3/nQcsP4mYFC6J51shpM4DHZKfA9lsIjum1NYBfcQ9G2O7Nt9//ir4yGRg=
+  on:
+    branch: master
+    tags: true
+  skip_existing: true
+  distributions: "sdist bdist_wheel"
