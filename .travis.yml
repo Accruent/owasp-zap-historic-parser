@@ -26,7 +26,7 @@ before_script:
 script:
 - pytest --cov owasp_zap_historic_parser -v
 after_success:
-- coveralls
+- coveralls --verbose
 #deploy:
 #  provider: pypi
 #  user: __token__
