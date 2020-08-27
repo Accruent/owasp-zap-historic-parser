@@ -1,8 +1,11 @@
 """Unit tests for functions used in OWASP ZAP Historic Parser"""
 import unittest
+import os
 
 from owasp_zap_historic_parser.owasp_zap_historical import convert_alert_to_dictionary
 from owasp_zap_historic_parser.owasp_zap_historical import html_parser
+
+ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestFunctions(unittest.TestCase):
@@ -38,7 +41,8 @@ class TestFunctions(unittest.TestCase):
 
     def test_html_parser(self):
         """This test verifies that the html parser correctly parses a zap file."""
-        result = html_parser("test_files/testReport.html")
+        file_path = ROOT_PATH + "/" + "test_files/testReport.html"
+        result = html_parser(file_path)
         expected_result = "[['Medium', 'X-Frame-Options Header Not Set', 1], ['Low', 'Cookie " \
                           "Without SameSite Attribute', 10], ['Low', 'X-Content-Type-Options " \
                           "Header Missing', 8], ['Low', 'Server Leaks Information via " \
@@ -52,7 +56,7 @@ class TestFunctions(unittest.TestCase):
 
     def test_html_parser_empty(self):
         """This test verifies that the html parser correctly parses an empty file."""
-        result = html_parser("test_files/empty.html")
-        # print(result)
+        file_path = ROOT_PATH + "/" + "test_files/empty.html"
+        result = html_parser(file_path)
         expected_result = "[]"
         self.assertEqual(str(result), expected_result)
