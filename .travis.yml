@@ -15,6 +15,12 @@ install:
 - pip install .
 - pip install coveralls
 - pip install pytest-cov
+before_script:
+- wget "http://chromedriver.storage.googleapis.com/78.0.3904.70/chromedriver_linux64.zip"
+- unzip chromedriver_linux64.zip
+- sudo mv chromedriver /usr/local/bin
+- export DISPLAY=:99.0
+- sleep 3
 script:
 - pytest --cov owasp_zap_historic_parser -v
 after_success:
