@@ -162,7 +162,7 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
             .astimezone(CENTRAL).strftime('%b %d %Y %I:%M %p %Z')
         title += "<tr><td style='border: 1px;'><strong>Comparison Report Version:</strong></td>" +\
                  "<td style='border: 1px;'>" + str(last_version[0]) + "</td></tr><tr>" + \
-                 "<td style='border: 1px;'><strong>This Report Date:</strong></td>" + \
+                 "<td style='border: 1px;'><strong>Comparison Report Date:</strong></td>" + \
                  "<td style='border: 1px;'>" + compare_date + "</td></tr><tr>" + \
                  "<td style='border: 1px;'><strong>Comparison Report Link:</strong></td>" + \
                  "<td style='border: 1px;'><a href='" + compare_row[2].replace(' ', '%20') + "'>" +\
