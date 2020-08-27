@@ -2,6 +2,7 @@
 import unittest
 
 from owasp_zap_historic_parser.owasp_zap_historical import convert_alert_to_dictionary
+from owasp_zap_historic_parser.owasp_zap_historical import html_parser
 
 
 class TestFunctions(unittest.TestCase):
@@ -34,3 +35,24 @@ class TestFunctions(unittest.TestCase):
         expected_tuple = "{}"
         result_tuple = convert_alert_to_dictionary(test_tuple)
         self.assertEqual(str(result_tuple), expected_tuple)
+
+    def test_html_parser(self):
+        """This test verifies that the html parser correctly parses a zap file."""
+        result = html_parser("test_files/testReport.html")
+        expected_result = "[['Medium', 'X-Frame-Options Header Not Set', 1], ['Low', 'Cookie " \
+                          "Without SameSite Attribute', 10], ['Low', 'X-Content-Type-Options " \
+                          "Header Missing', 8], ['Low', 'Server Leaks Information via " \
+                          "\"X-Powered-By\" HTTP Response Header Field(s)', 8], ['Low', 'Web " \
+                          "Browser XSS Protection Not Enabled', 1], ['Low', 'Cookie No HttpOnly " \
+                          "Flag', 3], ['Low', 'Incomplete or No Cache-control and Pragma HTTP " \
+                          "Header Set', 4], ['Low', 'Absence of Anti-CSRF Tokens', 2], " \
+                          "['Informational', 'Information Disclosure - Suspicious Comments', 4], " \
+                          "['Informational', 'Timestamp Disclosure - Unix', 4]]"
+        self.assertEqual(str(result), expected_result)
+
+    def test_html_parser_empty(self):
+        """This test verifies that the html parser correctly parses an empty file."""
+        result = html_parser("test_files/empty.html")
+        # print(result)
+        expected_result = "[]"
+        self.assertEqual(str(result), expected_result)
