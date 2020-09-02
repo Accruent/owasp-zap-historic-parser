@@ -7,6 +7,7 @@ from owasp_zap_historic_parser.runner import parse_options
 
 class TestRunner(unittest.TestCase):
     """Unit Tests for runner.py"""
+
     def test_filename(self):
         """Argument parser positive test for filename"""
         sys.argv[1:] = ['-f', 'empty.html']
