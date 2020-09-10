@@ -23,7 +23,6 @@ def process_zap_file(opts):
     final_message = process_zap_results(my_ozhdb, root_ozhdb, opts.this_env, opts.scantype,
                                         parsed_results, opts.projectname, opts.urllink,
                                         opts.version)
-    print(final_message)
     return final_message
 
 
@@ -76,14 +75,12 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
      appropriate tables."""
     cursor_obj = con.cursor()
     root_cursor_obj = ocon.cursor()
-    print('cursor', cursor_obj, 'root', root_cursor_obj)
     # new row in TB_EXECUTION table
     cursor_obj.execute("INSERT INTO TB_EXECUTION (Execution_Id, Execution_Date) VALUES (0, now())")
     con.commit()
     cursor_obj.execute("SELECT Execution_Id, Execution_Date from TB_EXECUTION ORDER BY "
                        "Execution_Id DESC LIMIT 1;")
     last_id = cursor_obj.fetchone()
-    print('last_id = ', last_id)
     # update project's TB_ALERTS table
     for result in zapresults:
         this_level = result[0]
@@ -99,7 +96,6 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
     cursor_obj.execute("SELECT COUNT(*) FROM TB_ALERTS WHERE Execution_Id = '%s' AND"
                        " Alert_Level ='High' ;" % last_id[0])
     high_alerts = cursor_obj.fetchone()
-    print('high_alerts = ', high_alerts)
     cursor_obj.execute("SELECT COUNT(*) FROM TB_ALERTS WHERE Execution_Id = '%s' AND"
                        " Alert_Level ='Medium' ;" % last_id[0])
     medium_alerts = cursor_obj.fetchone()
@@ -127,7 +123,6 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
         % (execution_rows[0], this_env, scantype, high_alerts[0], medium_alerts[0], low_alerts[0],
            info_alerts[0], version, projectname))
     ocon.commit()
-    print('last_id in compare ', last_id)
     last_date = last_id[1].replace(tzinfo=datetime.timezone.utc)\
         .astimezone(CENTRAL).strftime('%b %d %Y %I:%M %p %Z')
     # compare latest results
@@ -144,7 +139,6 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
     cursor_obj.execute("SELECT COUNT(*) FROM TB_EXECUTION WHERE Environment = '%s'"
                        " AND Scan_Type ='%s' ;" % (this_env, scantype))
     compare_rows = cursor_obj.fetchone()
-    print('compare_rows', compare_rows)
     if compare_rows[0] < 2:
         title += "</tbody></table><p>Not enough rows to compare results for " + this_env +\
                  " and " + scantype + ".</p><hr />"
@@ -153,7 +147,6 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
                            "WHERE Environment = '%s' AND Scan_Type ='%s' ORDER BY Execution_Id "
                            "DESC LIMIT 2;" % (this_env, scantype))
         these_rows = cursor_obj.fetchall()
-        print('these rows ', these_rows)
         compare_row = these_rows[1]
         cursor_obj.execute("SELECT Alert_level, Alert_Type, URLS_Affected FROM TB_ALERTS WHERE "
                            "Execution_Id = '%s'" % last_id[0])
@@ -164,7 +157,6 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
         cursor_obj.execute("SELECT Version FROM TB_EXECUTION WHERE Execution_Id = '%s'"
                            % compare_row[0])
         last_version = cursor_obj.fetchone()
-        print('compare row ', compare_row)
         compare_date = compare_row[1].replace(tzinfo=datetime.timezone.utc)\
             .astimezone(CENTRAL).strftime('%b %d %Y %I:%M %p %Z')
         title += "<tr><td style='border: 1px;'><strong>Comparison Report Version:</strong></td>" +\
