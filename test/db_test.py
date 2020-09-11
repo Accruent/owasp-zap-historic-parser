@@ -36,6 +36,12 @@ class TestDBFunctions(unittest.TestCase):
                                                               user=args[2], passwd=args[3],
                                                               database=args[4]))
 
+    def test_connect_to_mysql_db_error(self):
+        """Tests the mysql connection function when connection fails"""
+        args = (1, 2, 3, 4, 5)
+        connect_to_mysql_db(*args)
+        self.assertRaises(AttributeError)
+
     @patch('owasp_zap_historic_parser.owasp_zap_historical.html_parser')
     @patch('mysql.connector.connect')
     @patch('owasp_zap_historic_parser.owasp_zap_historical.process_zap_results',
