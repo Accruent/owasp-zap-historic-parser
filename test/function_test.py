@@ -58,6 +58,13 @@ class TestFunctions(unittest.TestCase):
                           "['Informational', 'Timestamp Disclosure - Unix', 4]]"
         self.assertEqual(str(result), expected_result)
 
+    def test_html_parser_same(self):
+        """This test verifies that the html parser correctly parses a zap file."""
+        file_path = ROOT_PATH + "/" + "test_files/testReportWithSame.html"
+        result = html_parser(file_path)
+        expected_result = "[['Medium', 'X-Frame-Options Header Not Set', 11]]"
+        self.assertEqual(str(result), expected_result)
+
     def test_html_parser_empty(self):
         """This test verifies that the html parser correctly parses an empty file."""
         file_path = ROOT_PATH + "/" + "test_files/empty.html"
