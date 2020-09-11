@@ -23,6 +23,7 @@ def process_zap_file(opts):
     final_message = process_zap_results(my_ozhdb, root_ozhdb, opts.this_env, opts.scantype,
                                         parsed_results, opts.projectname, opts.urllink,
                                         opts.version)
+    print(final_message)
     return final_message
 
 
