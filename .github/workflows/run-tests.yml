@@ -26,10 +26,6 @@ jobs:
       - name: Run Unit Tests
         run: |
           pytest --cov owasp_zap_historic_parser -v
-#      - name: Run Robot Tests
-#        run: |
-#          ${{ matrix.set_display }}
-#          robot -e BrokenORWindowsORMobile test
       - name: Coveralls
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
