@@ -1,7 +1,7 @@
 # owasp-zap-historic-parser
 
 [![PyPI version](https://badge.fury.io/py/owasp-zap-historic-parser.svg)](https://badge.fury.io/py/owasp-zap-historic-parser)
-[![Build Status](https://github.com/Accruent/owasp-zap-historic-parser/workflows/run-tests/badge.svg?branch=master)](https://github.com/Accruent/owasp-zap-historic-parser/actions?query=workflow%3Arun-tests)
+[![run-tests](https://github.com/Accruent/owasp-zap-historic-parser/actions/workflows/run-tests.yml/badge.svg)](https://github.com/Accruent/owasp-zap-historic-parser/actions/workflows/run-tests.yml)
 [![Downloads](https://pepy.tech/badge/owasp-zap-historic-parser)](https://pepy.tech/project/owasp-zap-historic-parser)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)
 ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
