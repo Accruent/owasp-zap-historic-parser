@@ -77,7 +77,9 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
     cursor_obj = con.cursor()
     root_cursor_obj = ocon.cursor()
     # new row in TB_EXECUTION table
-    cursor_obj.execute("INSERT INTO TB_EXECUTION (Execution_Id, Execution_Date) VALUES (0, now())")
+    utc = datetime.datetime.utcnow()
+    cursor_obj.execute("INSERT INTO TB_EXECUTION (Execution_Id, Execution_Date) "
+                       "VALUES (0, '%s')" % utc)
     con.commit()
     cursor_obj.execute("SELECT Execution_Id, Execution_Date from TB_EXECUTION ORDER BY "
                        "Execution_Id DESC LIMIT 1;")
@@ -118,11 +120,11 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
     cursor_obj.execute("SELECT COUNT(*) FROM TB_EXECUTION;")
     execution_rows = cursor_obj.fetchone()
     root_cursor_obj.execute(
-        "UPDATE TB_PROJECT SET Last_Updated = now(), Total_Executions = %s, Environment = '%s',"
+        "UPDATE TB_PROJECT SET Last_Updated = '%s', Total_Executions = %s, Environment = '%s',"
         "Scan_Type ='%s', Recent_High =%s, Recent_Medium =%s, Recent_Low =%s, "
         "Recent_Informational =%s, Version ='%s' WHERE Project_Name='%s';"
-        % (execution_rows[0], this_env, scantype, high_alerts[0], medium_alerts[0], low_alerts[0],
-           info_alerts[0], version, projectname))
+        % (utc, execution_rows[0], this_env, scantype, high_alerts[0], medium_alerts[0],
+           low_alerts[0], info_alerts[0], version, projectname))
     ocon.commit()
     last_date = last_id[1].replace(tzinfo=datetime.timezone.utc)\
         .astimezone(CENTRAL).strftime('%b %d %Y %I:%M %p %Z')
