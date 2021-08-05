@@ -327,20 +327,20 @@ def get_alert_table_row(back_color, color, alert_type, desc, urls, urls2):
         + back_color
         + "; color: "
         + color
-        + "'><td style='border: 1px solid"
+        + "'><td style='border: 1px solid #000"
         + ";'><strong>"
         + alert_type
         + "</strong></td><td style='border: 1px "
-        + "solid;'><strong>"
+        + "solid #000;'><strong>"
         + desc
-        + "</strong></td><td style=' border: 1px solid;'>"
+        + "</strong></td><td style=' border: 1px solid #000;'>"
         + "<strong>"
         + str(urls)
         + "</strong>"
-        + "</td><td style='border: 1px solid"
+        + "</td><td style='border: 1px solid #000"
         + ";'><strong>"
         + str(urls2)
-        + "</strong></td><td style='border: 1px solid;'>"
+        + "</strong></td><td style='border: 1px solid #000;'>"
         + "<strong>"
         + comments
         + "</strong></td></tr>"
