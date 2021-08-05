@@ -224,8 +224,7 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
         last_dict = convert_alert_to_dictionary(last_alerts)
         alert_breakdown = compare_zap_results(current_dict, last_dict, last_date,
                                               compare_date)
-    html_message = title + overall + alert_breakdown
-    return html_message
+    return title + overall + alert_breakdown
 
 
 def convert_alert_to_dictionary(alert_list):
