@@ -8,6 +8,7 @@
 ![Open Source Love png1](https://badges.frapsoft.com/os/v1/open-source.png?v=103)
 [![HitCount](http://hits.dwyl.com/Accruent/owasp-zap-historic-parser.svg)](http://hits.dwyl.com/Accruent/owasp-zap-historic-parser)
 [![Coverage Status](https://coveralls.io/repos/github/Accruent/owasp-zap-historic-parser/badge.svg?branch=master)](https://coveralls.io/github/Accruent/owasp-zap-historic-parser?branch=master)
+[![BCH compliance](https://bettercodehub.com/edge/badge/Accruent/owasp-zap-historic-parser?branch=master)](https://bettercodehub.com/)
 
 ---
 

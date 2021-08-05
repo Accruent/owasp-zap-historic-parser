@@ -6,6 +6,7 @@ from owasp_zap_historic_parser.owasp_zap_historical import convert_alert_to_dict
 from owasp_zap_historic_parser.owasp_zap_historical import compare_zap_results
 from owasp_zap_historic_parser.owasp_zap_historical import html_parser
 from owasp_zap_historic_parser.owasp_zap_historical import get_alert_table_row
+from owasp_zap_historic_parser.owasp_zap_historical import get_locators
 
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 THIS_DATE = "Aug 30 2020 10:43 PM CDT"
@@ -190,3 +191,12 @@ class TestFunctions(unittest.TestCase):
                      "potentially resolved</strong></td></tr>"
         result = get_alert_table_row("black", "white", "Test", "Test Type", 0, 3)
         self.assertEqual(str(result), exp_result)
+
+    def test_get_locators_new_locator(self):
+        """This test verifies the proper locators are returned by the get locators function
+        when a locator from a new zap report is passed in."""
+        alert_result, url_count = get_locators("//table[@class='alerts']//td[.='High']", 3)
+        exp_alert_result = "(//table[@class='alerts']//td[.='High'])[4]/../td[1]/a"
+        exp_url_count = "(//table[@class='alerts']//td[.='High'])[4]/../td[3]"
+        self.assertEqual(str(alert_result), exp_alert_result)
+        self.assertEqual(str(url_count), exp_url_count)
