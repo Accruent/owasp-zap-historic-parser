@@ -229,7 +229,7 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
 
 
 def convert_alert_to_dictionary(alert_list):
-    """This method converts a list of tuples into a dictionary of dictionaries"""
+    """This method converts a list of tuples into a dictionary of dictionaries test"""
     overall_dict = {}
     for level, alert_type, count in alert_list:
         combine = level + " | " + alert_type
