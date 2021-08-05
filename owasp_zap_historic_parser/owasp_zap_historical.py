@@ -281,7 +281,7 @@ def compare_zap_results(set1, set2, date1, date2):
                                                    set1[key]['URLs Affected'],
                                                    set2[key]['URLs Affected'])
             elif set2[key]['Alert Level'] == "False Positive":
-                info_alerts += get_alert_table_row("green", "#FFF", "False Positive",
+                false_alerts += get_alert_table_row("green", "#FFF", "False Positive",
                                                    set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'],
                                                    set2[key]['URLs Affected'])
@@ -303,7 +303,7 @@ def compare_zap_results(set1, set2, date1, date2):
                                                    set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'], 0)
             elif set1[key]['Alert Level'] == "False Positive":
-                info_alerts += get_alert_table_row("green", "#FFF", "False Positive",
+                false_alerts += get_alert_table_row("green", "#FFF", "False Positive",
                                                    set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'], 0)
     for key in set2:
@@ -314,7 +314,7 @@ def compare_zap_results(set1, set2, date1, date2):
                                                    0, set2[key]['URLs Affected'])
     # Construct and close Alerts table
     alerts_table += high_alerts + med_alerts + low_alerts + info_alerts + \
-        resolved_alerts + "</tbody></table>"
+        false_alerts + resolved_alerts + "</tbody></table>"
     return alerts_table
 
 

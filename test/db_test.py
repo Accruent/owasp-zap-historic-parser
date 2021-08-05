@@ -91,11 +91,9 @@ class TestDBFunctions(unittest.TestCase):
                                              ("Medium", "Test Alert B", 6)]]
         mock_cursor.description = (('name',), ('title',))
         zap_results = html_parser(file_path)
-        print(zap_results)
         args = (mock_conn, mock_conn, 'test', 'test', zap_results, 'test',
                 'http://www.google.com', 'test')
         result = process_zap_results(*args)
-        print(result)
         check_text = 'Number of URLs Affected stayed the same'
         self.assertTrue(check_text in result)
 
