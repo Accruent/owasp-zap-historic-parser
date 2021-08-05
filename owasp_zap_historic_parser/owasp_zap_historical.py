@@ -113,14 +113,14 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
     cursor_obj.execute("SELECT Execution_Id, Execution_Date from TB_EXECUTION ORDER BY "
                        "Execution_Id DESC LIMIT 1;")
     last_id = cursor_obj.fetchone()
+    sql = "INSERT INTO TB_ALERTS (Alert_Id, Execution_Id, Alert_Level, Alert_Type," \
+          " URLS_Affected)" \
+          "VALUES (%s, %s, %s, %s, %s);"
     # update project's TB_ALERTS table
     for result in zapresults:
         this_level = result[0]
         this_type = result[1]
         this_urls_aff = result[2]
-        sql = "INSERT INTO TB_ALERTS (Alert_Id, Execution_Id, Alert_Level, Alert_Type," \
-              " URLS_Affected)" \
-              "VALUES (%s, %s, %s, %s, %s);"
         val = (0, last_id[0], this_level, this_type, this_urls_aff)
         cursor_obj.execute(sql, val)
         con.commit()
@@ -257,7 +257,6 @@ def compare_zap_results(set1, set2, date1, date2):
     med_alerts = ''
     info_alerts = ''
     false_alerts = ''
-    resolved_alerts = ''
     for key in set1:
         if key in set2:
             if set2[key]['Alert Level'] == "High":
@@ -280,29 +279,35 @@ def compare_zap_results(set1, set2, date1, date2):
                                                    set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'],
                                                    set2[key]['URLs Affected'])
-        else:
-            if set1[key]['Alert Level'] == "High":
-                high_alerts += get_alert_table_row("red", "#FFF", "High",
-                                                   set1[key]['Alert Type'],
-                                                   set1[key]['URLs Affected'], 0)
-            elif set1[key]['Alert Level'] == "Medium":
-                med_alerts += get_alert_table_row("orange", "#FFF", "Medium",
-                                                  set1[key]['Alert Type'],
-                                                  set1[key]['URLs Affected'], 0)
-            elif set1[key]['Alert Level'] == "Low":
-                low_alerts += get_alert_table_row("yellow", "#000", "Low",
-                                                  set1[key]['Alert Type'],
-                                                  set1[key]['URLs Affected'], 0)
-            elif set1[key]['Alert Level'] == "Informational":
-                info_alerts += get_alert_table_row("blue", "#FFF", "Informational",
-                                                   set1[key]['Alert Type'],
-                                                   set1[key]['URLs Affected'], 0)
-    for key in set2:
-        if key not in set1:
-            resolved_alerts += get_alert_table_row("lightgreen", "#000",
-                                                   set2[key]['Alert Level'],
-                                                   set2[key]['Alert Type'],
-                                                   0, set2[key]['URLs Affected'])
+        elif set1[key]['Alert Level'] == "High":
+            high_alerts += get_alert_table_row("red", "#FFF", "High",
+                                               set1[key]['Alert Type'],
+                                               set1[key]['URLs Affected'], 0)
+        elif set1[key]['Alert Level'] == "Medium":
+            med_alerts += get_alert_table_row("orange", "#FFF", "Medium",
+                                              set1[key]['Alert Type'],
+                                              set1[key]['URLs Affected'], 0)
+        elif set1[key]['Alert Level'] == "Low":
+            low_alerts += get_alert_table_row("yellow", "#000", "Low",
+                                              set1[key]['Alert Type'],
+                                              set1[key]['URLs Affected'], 0)
+        elif set1[key]['Alert Level'] == "Informational":
+            info_alerts += get_alert_table_row("blue", "#FFF", "Informational",
+                                               set1[key]['Alert Type'],
+                                               set1[key]['URLs Affected'], 0)
+    resolved_alerts = ''.join(
+        get_alert_table_row(
+            "lightgreen",
+            "#000",
+            set2[key]['Alert Level'],
+            set2[key]['Alert Type'],
+            0,
+            set2[key]['URLs Affected'],
+        )
+        for key in set2
+        if key not in set1
+    )
+
     # Construct and close Alerts table
     alerts_table += high_alerts + med_alerts + low_alerts + info_alerts + \
         resolved_alerts + "</tbody></table>"
