@@ -213,12 +213,12 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
                   "<strong>False Positives</strong></td></tr></thead><tbody><tr style='" + \
                   "background: silver;'><td style='border: 1px solid;'><strong>" + \
                   str(total_alerts) + "</strong></td><td style='border: 1px solid black; " + \
-                  "color: red;'><strong>" + str(high_alerts[0]) + "</strong></td><td style='" + \
-                  "border: 1px solid black; color: orange;'><strong>" + str(medium_alerts[0]) + \
-                  "</strong></td><td style='border: 1px solid black; color: yellow;'><strong>" + \
+                  "'><strong>" + str(high_alerts[0]) + "</strong></td><td style='" + \
+                  "border: 1px solid black;'><strong>" + str(medium_alerts[0]) + \
+                  "</strong></td><td style='border: 1px solid black;'><strong>" + \
                   str(low_alerts[0]) + "</strong></td><td style='border: 1px solid black; " + \
-                  "color: blue;'><strong>" + str(info_alerts[0]) + "</strong></td>" + \
-                  "<td style='border: 1px solid black; color: green;'><strong>" + \
+                  "'><strong>" + str(info_alerts[0]) + "</strong></td>" + \
+                  "<td style='border: 1px solid black;'><strong>" + \
                   str(false_alerts[0]) + "</strong></td></tr></tbody></table><br><br><br><hr />"
         current_dict = convert_alert_to_dictionary(current_alerts)
         last_dict = convert_alert_to_dictionary(last_alerts)
