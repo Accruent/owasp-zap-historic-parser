@@ -261,40 +261,46 @@ def compare_zap_results(set1, set2, date1, date2):
     for key in set1:
         if key in set2:
             if set2[key]['Alert Level'] == "High":
-                high_alerts += get_alert_table_row("#ff8585", "High", set1[key]['Alert Type'],
+                high_alerts += get_alert_table_row("red", "#FFF", "High",
+                                                   set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'],
                                                    set2[key]['URLs Affected'])
             elif set2[key]['Alert Level'] == "Medium":
-
-                med_alerts += get_alert_table_row("orange", "Medium", set1[key]['Alert Type'],
+                med_alerts += get_alert_table_row("orange", "#FFF", "Medium",
+                                                  set1[key]['Alert Type'],
                                                   set1[key]['URLs Affected'],
                                                   set2[key]['URLs Affected'])
             elif set2[key]['Alert Level'] == "Low":
-                low_alerts += get_alert_table_row("lightyellow", "Low", set1[key]['Alert Type'],
+                low_alerts += get_alert_table_row("yellow", "#000", "Low",
+                                                  set1[key]['Alert Type'],
                                                   set1[key]['URLs Affected'],
                                                   set2[key]['URLs Affected'])
-            else:
-                info_alerts += get_alert_table_row("silver", "Informational",
+            elif set2[key]['Alert Level'] == "Informational":
+                info_alerts += get_alert_table_row("blue", "#FFF", "Informational",
                                                    set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'],
                                                    set2[key]['URLs Affected'])
         else:
             if set1[key]['Alert Level'] == "High":
-                high_alerts += get_alert_table_row("#ff8585", "High", set1[key]['Alert Type'],
+                high_alerts += get_alert_table_row("red", "#FFF", "High",
+                                                   set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'], 0)
             elif set1[key]['Alert Level'] == "Medium":
-                med_alerts += get_alert_table_row("orange", "Medium", set1[key]['Alert Type'],
+                med_alerts += get_alert_table_row("orange", "#FFF", "Medium",
+                                                  set1[key]['Alert Type'],
                                                   set1[key]['URLs Affected'], 0)
             elif set1[key]['Alert Level'] == "Low":
-                low_alerts += get_alert_table_row("lightyellow", "Low", set1[key]['Alert Type'],
+                low_alerts += get_alert_table_row("yellow", "#000", "Low",
+                                                  set1[key]['Alert Type'],
                                                   set1[key]['URLs Affected'], 0)
-            else:
-                info_alerts += get_alert_table_row("silver", "Informational",
+            elif set1[key]['Alert Level'] == "Informational":
+                info_alerts += get_alert_table_row("blue", "#FFF", "Informational",
                                                    set1[key]['Alert Type'],
                                                    set1[key]['URLs Affected'], 0)
     for key in set2:
         if key not in set1:
-            resolved_alerts += get_alert_table_row("lightgreen", set2[key]['Alert Level'],
+            resolved_alerts += get_alert_table_row("lightgreen", "#000",
+                                                   set2[key]['Alert Level'],
                                                    set2[key]['Alert Type'],
                                                    0, set2[key]['URLs Affected'])
     # Construct and close Alerts table
@@ -303,7 +309,7 @@ def compare_zap_results(set1, set2, date1, date2):
     return alerts_table
 
 
-def get_alert_table_row(back_color, alert_type, desc, urls, urls2):
+def get_alert_table_row(back_color, color, alert_type, desc, urls, urls2):
     """This method creates a table row for the alert table."""
     comments = ''
     if urls > urls2 > 0:
@@ -317,9 +323,11 @@ def get_alert_table_row(back_color, alert_type, desc, urls, urls2):
     elif urls2 == 0:
         comments = 'New Alert'
     return (
-        "<tr style='background: "
+        "<tr style='background-color: "
         + back_color
-        + ";'><td style='border: 1px solid"
+        + "; color: "
+        + color
+        + "'><td style='border: 1px solid"
         + ";'><strong>"
         + alert_type
         + "</strong></td><td style='border: 1px "
