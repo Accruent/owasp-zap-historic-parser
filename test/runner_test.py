@@ -127,7 +127,3 @@ class TestRunner(unittest.TestCase):
         sys.argv[1:] = ['-v']
         with self.assertRaises(SystemExit):
             parse_options()
-
-
-if __name__ == '__main__':
-    unittest.main()
