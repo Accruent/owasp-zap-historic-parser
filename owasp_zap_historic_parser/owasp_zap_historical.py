@@ -143,10 +143,10 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
     # update project's TB_EXECUTION latest id
     cursor_obj.execute("UPDATE TB_EXECUTION SET Environment = '%s', Scan_Type = '%s',"
                        "High_Alerts = %s, Medium_Alerts = %s,"
-                       "Low_Alerts = %s, Informational_Alerts = %s, URL_Link = '%s', "
-                       "Version = '%s' WHERE Execution_Id='%s';"
+                       "Low_Alerts = %s, Informational_Alerts = %s, False_Alerts = %s,"
+                       "URL_Link = '%s', Version = '%s' WHERE Execution_Id='%s';"
                        % (this_env, scantype, high_alerts[0], medium_alerts[0], low_alerts[0],
-                          info_alerts[0], url_link, version, last_id[0]))
+                          info_alerts[0], false_alerts[0], url_link, version, last_id[0]))
     con.commit()
     # update owasphistoric.TB_PROJECT table
     cursor_obj.execute("SELECT COUNT(*) FROM TB_EXECUTION;")
@@ -154,9 +154,9 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
     root_cursor_obj.execute(
         "UPDATE TB_PROJECT SET Last_Updated = '%s', Total_Executions = %s, Environment = '%s',"
         "Scan_Type ='%s', Recent_High =%s, Recent_Medium =%s, Recent_Low =%s, "
-        "Recent_Informational =%s, Version ='%s' WHERE Project_Name='%s';"
+        "Recent_Informational =%s, Recent_False =%s, Version ='%s' WHERE Project_Name='%s';"
         % (utc, execution_rows[0], this_env, scantype, high_alerts[0], medium_alerts[0],
-           low_alerts[0], info_alerts[0], version, projectname))
+           low_alerts[0], info_alerts[0], false_alerts[0], version, projectname))
     ocon.commit()
     last_date = last_id[1].replace(tzinfo=datetime.timezone.utc) \
         .astimezone(CENTRAL).strftime('%b %d %Y %I:%M %p %Z')
@@ -199,17 +199,18 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
                  "<td style='border: 1px;'><strong>Comparison Report Date:</strong></td>" + \
                  "<td style='border: 1px;'>" + compare_date + "</td></tr><tr>" + \
                  "<td style='border: 1px;'><strong>Comparison Report Link:</strong></td>" + \
-                 "<td style='border: 1px;'><a href='" + compare_row[2].replace(' ', '%20') + "'>" +\
+                 "<td style='border: 1px;'><a href='" + compare_row[2].replace(' ', '%20') + "'>" + \
                  "Comparison ZAP Report</a></td></tr></tbody></table><hr />"
         # Construct Overall Alerts Table
-        total_alerts = high_alerts[0] + medium_alerts[0] + low_alerts[0] + info_alerts[0]
+        total_alerts = high_alerts[0] + medium_alerts[0] + low_alerts[0] + info_alerts[0] + \
+                       false_alerts[0]
         overall = "<h2>Overall Alerts</h2><table style='float: left; text-align: center; " + \
                   "border: 1px white; border-collapse: collapse;' width='465'><thead><tr " + \
                   "style='background: gray;'><td style='border: 1px solid;'><strong>Total" + \
                   "</strong></td><td style='border: 1px solid;'><strong>High</strong></td>" + \
                   "<td style='border: 1px solid;'><strong>Medium</strong></td><td style='" + \
-                  "border: 1px solid;'><strong>Low</strong></td><td style='border: 1px solid;'>" +\
-                  "<strong>Informational</strong></td><td style='border: 1px solid;'>" +\
+                  "border: 1px solid;'><strong>Low</strong></td><td style='border: 1px solid;'>" + \
+                  "<strong>Informational</strong></td><td style='border: 1px solid;'>" + \
                   "<strong>False Positives</strong></td></tr></thead><tbody><tr style='" + \
                   "background: silver;'><td style='border: 1px solid;'><strong>" + \
                   str(total_alerts) + "</strong></td><td style='border: 1px solid black; " + \
@@ -282,9 +283,9 @@ def compare_zap_results(set1, set2, date1, date2):
                                                    set2[key]['URLs Affected'])
             elif set2[key]['Alert Level'] == "False Positive":
                 false_alerts += get_alert_table_row("green", "#FFF", "False Positive",
-                                                   set1[key]['Alert Type'],
-                                                   set1[key]['URLs Affected'],
-                                                   set2[key]['URLs Affected'])
+                                                    set1[key]['Alert Type'],
+                                                    set1[key]['URLs Affected'],
+                                                    set2[key]['URLs Affected'])
         else:
             if set1[key]['Alert Level'] == "High":
                 high_alerts += get_alert_table_row("red", "#FFF", "High",
@@ -304,8 +305,8 @@ def compare_zap_results(set1, set2, date1, date2):
                                                    set1[key]['URLs Affected'], 0)
             elif set1[key]['Alert Level'] == "False Positive":
                 false_alerts += get_alert_table_row("green", "#FFF", "False Positive",
-                                                   set1[key]['Alert Type'],
-                                                   set1[key]['URLs Affected'], 0)
+                                                    set1[key]['Alert Type'],
+                                                    set1[key]['URLs Affected'], 0)
     for key in set2:
         if key not in set1:
             resolved_alerts += get_alert_table_row("lightgreen", "#000",
@@ -314,7 +315,7 @@ def compare_zap_results(set1, set2, date1, date2):
                                                    0, set2[key]['URLs Affected'])
     # Construct and close Alerts table
     alerts_table += high_alerts + med_alerts + low_alerts + info_alerts + \
-        false_alerts + resolved_alerts + "</tbody></table>"
+                    false_alerts + resolved_alerts + "</tbody></table>"
     return alerts_table
 
 
@@ -332,27 +333,27 @@ def get_alert_table_row(back_color, color, alert_type, desc, urls, urls2):
     elif urls2 == 0:
         comments = 'New Alert'
     return (
-        "<tr style='background-color: "
-        + back_color
-        + "; color: "
-        + color
-        + "'><td style='border: 1px solid #000"
-        + ";'><strong>"
-        + alert_type
-        + "</strong></td><td style='border: 1px "
-        + "solid #000;'><strong>"
-        + desc
-        + "</strong></td><td style=' border: 1px solid #000;'>"
-        + "<strong>"
-        + str(urls)
-        + "</strong>"
-        + "</td><td style='border: 1px solid #000"
-        + ";'><strong>"
-        + str(urls2)
-        + "</strong></td><td style='border: 1px solid #000;'>"
-        + "<strong>"
-        + comments
-        + "</strong></td></tr>"
+            "<tr style='background-color: "
+            + back_color
+            + "; color: "
+            + color
+            + "'><td style='border: 1px solid #000"
+            + ";'><strong>"
+            + alert_type
+            + "</strong></td><td style='border: 1px "
+            + "solid #000;'><strong>"
+            + desc
+            + "</strong></td><td style=' border: 1px solid #000;'>"
+            + "<strong>"
+            + str(urls)
+            + "</strong>"
+            + "</td><td style='border: 1px solid #000"
+            + ";'><strong>"
+            + str(urls2)
+            + "</strong></td><td style='border: 1px solid #000;'>"
+            + "<strong>"
+            + comments
+            + "</strong></td></tr>"
     )
 
 
