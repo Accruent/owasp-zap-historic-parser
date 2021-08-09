@@ -85,10 +85,10 @@ class TestDBFunctions(unittest.TestCase):
                                               'http://www.google.com'),
                                              (1, datetime.datetime(2018, 4, 6, 5, 5, 5),
                                               'http://www.google.com')],
-                                            [("Test Level", "Test Alert A", 3),
-                                             ("Test Level 2", "Test Alert B", 6)],
-                                            [("Test Level", "Test Alert A", 3),
-                                             ("Test Level 2", "Test Alert B", 6)]]
+                                            [("High", "Test Alert A", 3),
+                                             ("Medium", "Test Alert B", 6)],
+                                            [("High", "Test Alert A", 3),
+                                             ("Medium", "Test Alert B", 6)]]
         mock_cursor.description = (('name',), ('title',))
         zap_results = html_parser(file_path)
         args = (mock_conn, mock_conn, 'test', 'test', zap_results, 'test',
@@ -111,10 +111,10 @@ class TestDBFunctions(unittest.TestCase):
                                               'http://www.google.com'),
                                              (1, datetime.datetime(2018, 4, 6, 5, 5, 5),
                                               'http://www.google.com')],
-                                            [("Test Level", "Test Alert A", 3),
-                                             ("Test Level 2", "Test Alert B", 6)],
-                                            [("Test Level", "Test Alert A", 2),
-                                             ("Test Level 2", "Test Alert B", 5)]]
+                                            [("Low", "Test Alert A", 3),
+                                             ("Informational", "Test Alert B", 6)],
+                                            [("Low", "Test Alert A", 2),
+                                             ("Informational", "Test Alert B", 5)]]
         mock_cursor.description = (('name',), ('title',))
         zap_results = html_parser(file_path)
         args = (mock_conn, mock_conn, 'test', 'test', zap_results, 'test',
@@ -137,10 +137,10 @@ class TestDBFunctions(unittest.TestCase):
                                               'http://www.google.com'),
                                              (1, datetime.datetime(2018, 4, 6, 5, 5, 5),
                                               'http://www.google.com')],
-                                            [("Test Level", "Test Alert A", 1),
-                                             ("Test Level 2", "Test Alert B", 4)],
-                                            [("Test Level", "Test Alert A", 2),
-                                             ("Test Level 2", "Test Alert B", 5)]]
+                                            [("High", "Test Alert A", 1),
+                                             ("False Positive", "Test Alert B", 4)],
+                                            [("High", "Test Alert A", 2),
+                                             ("False Positive", "Test Alert B", 5)]]
         mock_cursor.description = (('name',), ('title',))
         zap_results = html_parser(file_path)
         args = (mock_conn, mock_conn, 'test', 'test', zap_results, 'test',

@@ -51,8 +51,7 @@ def parse_options():
         '-f', '--filename', dest='filename', help="File / path of ZAP report.html"
     )
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def main():

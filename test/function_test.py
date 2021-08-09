@@ -6,6 +6,7 @@ from owasp_zap_historic_parser.owasp_zap_historical import convert_alert_to_dict
 from owasp_zap_historic_parser.owasp_zap_historical import compare_zap_results
 from owasp_zap_historic_parser.owasp_zap_historical import html_parser
 from owasp_zap_historic_parser.owasp_zap_historical import get_alert_table_row
+from owasp_zap_historic_parser.owasp_zap_historical import get_locators
 
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 THIS_DATE = "Aug 30 2020 10:43 PM CDT"
@@ -29,9 +30,9 @@ class TestFunctions(unittest.TestCase):
         into a formatted dictionary. """
         test_tuple = [("Test Level", "Test Alert A", 3), ("Test Level 2", "Test Alert B", 6)]
         expected_dictionary = "{'Test Level | Test Alert A': {'Alert Level': 'Test Level', " \
-                         "'Alert Type': 'Test Alert A', 'URLs Affected': 3}, 'Test Level 2 " \
-                         "| Test Alert B': {'Alert Level': 'Test Level 2', 'Alert Type': " \
-                         "'Test Alert B', 'URLs Affected': 6}}"
+                              "'Alert Type': 'Test Alert A', 'URLs Affected': 3}, 'Test Level 2 " \
+                              "| Test Alert B': {'Alert Level': 'Test Level 2', 'Alert Type': " \
+                              "'Test Alert B', 'URLs Affected': 6}}"
         result_dictionary = convert_alert_to_dictionary(test_tuple)
         self.assertEqual(str(result_dictionary), expected_dictionary)
 
@@ -138,55 +139,64 @@ class TestFunctions(unittest.TestCase):
 
     def test_get_alert_table_row_same(self):
         """This test verifies that get alert table row returns the row correctly."""
-        exp_result = "<tr style='background: silver;'><td style='border: 1px solid;'><strong>" \
-                     "Test</strong></td><td style='border: 1px solid;'><strong>Test Type" \
-                     "</strong></td><td style=' border: 1px solid;'><strong>3</strong></td>" \
-                     "<td style='border: 1px solid;'><strong>3</strong></td><td style='border:" \
-                     " 1px solid;'><strong>Number of URLs Affected stayed the same</strong>" \
-                     "</td></tr>"
-        result = get_alert_table_row("silver", "Test", "Test Type", 3, 3)
+        exp_result = "<tr style='background-color: silver; color: white'><td style='border: " \
+                     "1px solid #000;'><strong>Test</strong></td><td style='border: 1px solid " \
+                     "#000;'><strong>Test Type</strong></td><td style=' border: 1px solid #000;'>" \
+                     "<strong>3</strong></td><td style='border: 1px solid #000;'><strong>3" \
+                     "</strong></td><td style='border: 1px solid #000;'><strong>Number of " \
+                     "URLs Affected stayed the same</strong></td></tr>"
+        result = get_alert_table_row("silver", "white", "Test", "Test Type", 3, 3)
         self.assertEqual(str(result), exp_result)
 
     def test_get_alert_table_row_higher(self):
         """This test verifies that get alert table row returns the row correctly."""
-        exp_result = "<tr style='background: red;'><td style='border: 1px solid;'><strong>" \
-                     "Test</strong></td><td style='border: 1px solid;'><strong>Test Type" \
-                     "</strong></td><td style=' border: 1px solid;'><strong>3</strong></td>" \
-                     "<td style='border: 1px solid;'><strong>2</strong></td><td style='border:" \
-                     " 1px solid;'><strong>Number of URLs Affected increased</strong>" \
-                     "</td></tr>"
-        result = get_alert_table_row("red", "Test", "Test Type", 3, 2)
+        exp_result = "<tr style='background-color: red; color: black'><td style='border: " \
+                     "1px solid #000;'><strong>Test</strong></td><td style='border: 1px solid " \
+                     "#000;'><strong>Test Type</strong></td><td style=' border: 1px solid #000;'>" \
+                     "<strong>3</strong></td><td style='border: 1px solid #000;'><strong>2" \
+                     "</strong></td><td style='border: 1px solid #000;'><strong>Number of URLs " \
+                     "Affected increased</strong></td></tr>"
+        result = get_alert_table_row("red", "black", "Test", "Test Type", 3, 2)
         self.assertEqual(str(result), exp_result)
 
     def test_get_alert_table_row_lower(self):
         """This test verifies that get alert table row returns the row correctly."""
-        exp_result = "<tr style='background: yellow;'><td style='border: 1px solid;'><strong>" \
-                     "Test</strong></td><td style='border: 1px solid;'><strong>Test Type" \
-                     "</strong></td><td style=' border: 1px solid;'><strong>1</strong></td>" \
-                     "<td style='border: 1px solid;'><strong>3</strong></td><td style='border:" \
-                     " 1px solid;'><strong>Number of URLs Affected decreased</strong>" \
-                     "</td></tr>"
-        result = get_alert_table_row("yellow", "Test", "Test Type", 1, 3)
+        exp_result = "<tr style='background-color: yellow; color: white'><td style='border: " \
+                     "1px solid #000;'><strong>Test</strong></td><td style='border: 1px solid " \
+                     "#000;'><strong>Test Type</strong></td><td style=' border: 1px solid #000;'>"\
+                     "<strong>1</strong></td><td style='border: 1px solid #000;'><strong>3" \
+                     "</strong></td><td style='border: 1px solid #000;'><strong>Number of URLs " \
+                     "Affected decreased</strong></td></tr>"
+        result = get_alert_table_row("yellow", "white", "Test", "Test Type", 1, 3)
         self.assertEqual(str(result), exp_result)
 
     def test_get_alert_table_row_new(self):
         """This test verifies that get alert table row returns the row correctly."""
-        exp_result = "<tr style='background: gray;'><td style='border: 1px solid;'><strong>" \
-                     "Test</strong></td><td style='border: 1px solid;'><strong>Test Type" \
-                     "</strong></td><td style=' border: 1px solid;'><strong>1</strong></td>" \
-                     "<td style='border: 1px solid;'><strong>0</strong></td><td style='border:" \
-                     " 1px solid;'><strong>New Alert</strong>" \
-                     "</td></tr>"
-        result = get_alert_table_row("gray", "Test", "Test Type", 1, 0)
+        exp_result = "<tr style='background-color: gray; color: black'><td style='border: 1px " \
+                     "solid #000;'><strong>Test</strong></td><td style='border: 1px solid #000;'>"\
+                     "<strong>Test Type</strong></td><td style=' border: 1px solid #000;'>" \
+                     "<strong>1</strong></td><td style='border: 1px solid #000;'><strong>0" \
+                     "</strong></td><td style='border: 1px solid #000;'><strong>New Alert" \
+                     "</strong></td></tr>"
+        result = get_alert_table_row("gray", "black", "Test", "Test Type", 1, 0)
         self.assertEqual(str(result), exp_result)
 
     def test_get_alert_table_row_resolved(self):
         """This test verifies that get alert table row returns the row correctly."""
-        exp_result = "<tr style='background: black;'><td style='border: 1px solid;'><strong>" \
-                     "Test</strong></td><td style='border: 1px solid;'><strong>Test Type" \
-                     "</strong></td><td style=' border: 1px solid;'><strong>0</strong></td>" \
-                     "<td style='border: 1px solid;'><strong>3</strong></td><td style='border:" \
-                     " 1px solid;'><strong>Alert potentially resolved</strong>" \
-                     "</td></tr>"
-        result = get_alert_table_row("black", "Test", "Test Type", 0, 3)
+        exp_result = "<tr style='background-color: black; color: white'><td style='border: 1px " \
+                     "solid #000;'><strong>Test</strong></td><td style='border: 1px solid " \
+                     "#000;'><strong>Test Type</strong></td><td style=' border: 1px solid #000" \
+                     ";'><strong>0</strong></td><td style='border: 1px solid #000;'><strong>3" \
+                     "</strong></td><td style='border: 1px solid #000;'><strong>Alert " \
+                     "potentially resolved</strong></td></tr>"
+        result = get_alert_table_row("black", "white", "Test", "Test Type", 0, 3)
         self.assertEqual(str(result), exp_result)
+
+    def test_get_locators_new_locator(self):
+        """This test verifies the proper locators are returned by the get locators function
+        when a locator from a new zap report is passed in."""
+        alert_result, url_count = get_locators("//table[@class='alerts']//td[.='High']", 3)
+        exp_alert_result = "(//table[@class='alerts']//td[.='High'])[4]/../td[1]/a"
+        exp_url_count = "(//table[@class='alerts']//td[.='High'])[4]/../td[3]"
+        self.assertEqual(str(alert_result), exp_alert_result)
+        self.assertEqual(str(url_count), exp_url_count)

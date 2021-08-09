@@ -20,7 +20,7 @@ jobs:
           pip install coveralls mock pytest-cov
       - name: Run Unit Tests
         run: |
-          pytest --cov owasp_zap_historic_parser -v
+          pytest --cov-config=.coveragerc --cov=test -v
       - name: Coveralls
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
