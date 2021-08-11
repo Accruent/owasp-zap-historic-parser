@@ -6,6 +6,7 @@ import pytz
 
 # Times are stored as UTC and converted using this variable to CDT.
 CENTRAL = pytz.timezone('US/Central')
+TABLE_LOCATOR = "//td[@class='risk-3']/div[.='High']"
 HIGH_LOCATOR = "//table[@class='results']//th[contains(text(),'High ')]"
 MED_LOCATOR = "//table[@class='results']//th[contains(text(),'Medium ')]"
 LOW_LOCATOR = "//table[@class='results']//th[contains(text(),'Low ')]"
@@ -15,8 +16,6 @@ NEW_MED_LOCATOR = "//table[@class='alerts']//td[.='Medium']"
 NEW_LOW_LOCATOR = "//table[@class='alerts']//td[.='Low']"
 NEW_INFO_LOCATOR = "//table[@class='alerts']//td[.='Informational']"
 NEW_FALSE_LOCATOR = "//table[@class='alerts']//td[.='False Positives']"
-loc_list = [HIGH_LOCATOR, MED_LOCATOR, LOW_LOCATOR, INFO_LOCATOR, NEW_HIGH_LOCATOR,
-            NEW_MED_LOCATOR, NEW_LOW_LOCATOR, NEW_INFO_LOCATOR, NEW_FALSE_LOCATOR]
 
 
 def process_zap_file(opts):
@@ -45,6 +44,13 @@ def html_parser(filename):
     # Get parser ready
     parser = etree.HTMLParser()
     tree = etree.parse(filename, parser)
+    # See if report has alert table and adjust which locators to use
+    table_count = int(tree.xpath("count(" + TABLE_LOCATOR + ")"))
+    if table_count > 0:
+        loc_list = [NEW_HIGH_LOCATOR, NEW_MED_LOCATOR, NEW_LOW_LOCATOR, NEW_INFO_LOCATOR,
+                    NEW_FALSE_LOCATOR]
+    else:
+        loc_list = [HIGH_LOCATOR, MED_LOCATOR, LOW_LOCATOR, INFO_LOCATOR]
     # Iterate through locators and get alert information and url count
     for loc in loc_list:
         level = ''
@@ -199,7 +205,7 @@ def process_zap_results(con, ocon, this_env, scantype, zapresults, projectname, 
                  "<td style='border: 1px;'><strong>Comparison Report Date:</strong></td>" + \
                  "<td style='border: 1px;'>" + compare_date + "</td></tr><tr>" + \
                  "<td style='border: 1px;'><strong>Comparison Report Link:</strong></td>" + \
-                 "<td style='border: 1px;'><a href='" + compare_row[2].replace(' ', '%20') + "'>" + \
+                 "<td style='border: 1px;'><a href='" + compare_row[2].replace(' ', '%20') + "'>" +\
                  "Comparison ZAP Report</a></td></tr></tbody></table><hr />"
         # Construct Overall Alerts Table
         total_alerts = high_alerts[0] + medium_alerts[0] + low_alerts[0] + info_alerts[0] + \
