@@ -46,7 +46,6 @@ def html_parser(filename):
     tree = etree.parse(filename, parser)
     # See if report has alert table and adjust which locators to use
     table_count = int(tree.xpath("count(" + TABLE_LOCATOR + ")"))
-    print(table_count)
     if table_count > 0:
         loc_list = [NEW_HIGH_LOCATOR, NEW_MED_LOCATOR, NEW_LOW_LOCATOR, NEW_INFO_LOCATOR,
                     NEW_FALSE_LOCATOR]
