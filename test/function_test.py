@@ -73,6 +73,15 @@ class TestFunctions(unittest.TestCase):
         expected_result = "[]"
         self.assertEqual(str(result), expected_result)
 
+    def test_html_parser_false(self):
+        """This test verifies that the html parser correctly parses a file with a false
+        positive."""
+        file_path = ROOT_PATH + "/" + "test_files/newReport.html"
+        result = html_parser(file_path)
+        print(result)
+        expected_result = "[['False Positive', 'Test Alert', 1]]"
+        self.assertEqual(str(result), expected_result)
+
     def test_compare_zap_results_same(self):
         """This test verifies that compare zap results returns the alert table correctly."""
         this_dict = {'High | Same URL Count': {'Alert Level': 'High',
