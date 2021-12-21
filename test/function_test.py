@@ -118,7 +118,10 @@ class TestFunctions(unittest.TestCase):
 
     def test_compare_zap_results_new(self):
         """This test verifies that compare zap results returns the alert table correctly."""
-        this_dict = {'Informational | First Alert': {'Alert Level': 'Informational',
+        this_dict = {'False Positive | New Alert': {'Alert Level': 'False Positive',
+                                                    'Alert Type': 'New Alert',
+                                                    'URLs Affected': 2},
+                     'Informational | First Alert': {'Alert Level': 'Informational',
                                                      'Alert Type': 'First Alert',
                                                      'URLs Affected': 2},
                      'Low | 2nd Alert': {'Alert Level': 'Low',
