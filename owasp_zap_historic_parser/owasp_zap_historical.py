@@ -15,7 +15,7 @@ NEW_HIGH_LOCATOR = "//table[@class='alerts']//td[.='High']"
 NEW_MED_LOCATOR = "//table[@class='alerts']//td[.='Medium']"
 NEW_LOW_LOCATOR = "//table[@class='alerts']//td[.='Low']"
 NEW_INFO_LOCATOR = "//table[@class='alerts']//td[.='Informational']"
-NEW_FALSE_LOCATOR = "//table[@class='alerts']//td[.='False Positives']"
+NEW_FALSE_LOCATOR = "//table[@class='alerts']//td[.='False Positive']"
 
 
 def process_zap_file(opts):
