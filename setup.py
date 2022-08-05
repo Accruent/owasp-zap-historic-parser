@@ -2,7 +2,7 @@
 from setuptools import find_packages, setup
 import version
 
-with open("README.md", "r") as fh:
+with open("docs/README.md", "r") as fh:
     LONG_DESCRIPTION = fh.read()
     print(LONG_DESCRIPTION)
 

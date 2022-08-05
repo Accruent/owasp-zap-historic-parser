@@ -17,6 +17,7 @@ SQLAlchemy = "^1.4.39"
 
 [tool.poetry.dev-dependencies]
 pytest-cov = "^3.0.0"
+invoke = "^1.7.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
