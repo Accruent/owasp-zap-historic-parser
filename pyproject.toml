@@ -4,7 +4,7 @@ version = "0.2.2"
 description = "Parser to push OWASP ZAP report data to MySQL and generate delta report"
 authors = ["Neil Howell <neil.howell@gmail.com>"]
 license = "GPL-3.0"
-readme = "README.md"
+readme = "./docs/README.md"
 homepage = "https://github.com/Accruent/owasp-zap-historic-parser"
 
 [tool.poetry.dependencies]
