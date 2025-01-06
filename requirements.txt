@@ -1,4 +1,4 @@
-setuptools~=75.6.0
+setuptools~=75.7.0
 lxml~=5.3.0
 pytz~=2024.2
 pytest-cov~=6.0.0
