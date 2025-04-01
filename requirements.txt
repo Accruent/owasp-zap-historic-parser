@@ -3,4 +3,4 @@ lxml~=5.3.1
 pytz~=2025.2
 pytest-cov~=6.1.0
 mysql-connector~=2.2.9
-SQLAlchemy~=2.0.39
+SQLAlchemy~=2.0.40
