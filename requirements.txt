@@ -1,5 +1,5 @@
 setuptools~=79.0.0
-lxml~=5.3.2
+lxml~=5.4.0
 pytz~=2025.2
 pytest-cov~=6.1.1
 mysql-connector~=2.2.9
