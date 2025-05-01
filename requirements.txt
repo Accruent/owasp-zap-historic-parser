@@ -1,4 +1,4 @@
-setuptools~=80.0.1
+setuptools~=80.1.0
 lxml~=5.4.0
 pytz~=2025.2
 pytest-cov~=6.1.1
