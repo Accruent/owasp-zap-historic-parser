@@ -1,6 +1,6 @@
 setuptools~=82.0.1
 lxml~=6.0.2
-pytz~=2025.2
+pytz~=2026.1
 pytest-cov~=7.0.0
 mysql-connector~=2.2.9
 SQLAlchemy~=2.0.44
