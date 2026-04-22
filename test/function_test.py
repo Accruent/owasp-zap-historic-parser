@@ -147,7 +147,7 @@ class TestFunctions(unittest.TestCase):
                                                'URLs Affected': 2}}
         check_text = "Alert potentially resolved"
         result = compare_zap_results(this_dict, comp_dict, THIS_DATE, COMP_DATE)
-        self.assertTrue(check_text in result)
+        self.assertIn(check_text, result)
 
     def test_get_alert_table_row_same(self):
         """This test verifies that get alert table row returns the row correctly."""
